@@ -1,12 +1,12 @@
 {
   "name": "express-markdown-static",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "An Express middleware function for serving static content while also rendering markdown",
   "main": "index.js",
   "scripts": {
     "prepack": "tsc",
-    "postpublish": "rimraf index.js index.d.ts",
-    "lint": "prettier --write index.ts && eslint --fix index.ts"
+    "postpublish": "rimraf dist",
+    "lint": "prettier --write src/index.ts && eslint --fix src/index.ts"
   },
   "author": "Cal Crosby",
   "license": "ISC",
@@ -24,7 +24,6 @@
     "showdown": "^2.1.0"
   },
   "files": [
-    "index.js",
-    "index.d.ts"
+    "dist"
   ]
 }

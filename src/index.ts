@@ -7,11 +7,10 @@ import { extname } from "path";
  * The options for the Markdown middleware.
  */
 export interface MarkdownStaticOptions {
-
   /**
    * The extensions which will be interpreted as Markdown files.
    */
-  extensions?: Extension[];
+  extensions?: string[];
 
   /**
    * Indicates whether the Markdown extension is required for a file
@@ -29,13 +28,6 @@ async function htmlFromMarkdownFile(file: string) {
   return html;
 }
 
-type Extension = `.${string}`
-
-const defaultOptions: Required<MarkdownStaticOptions> = {
-  extensions: [".md", ".markdown"],
-  extensionRequired: true,
-};
-
 /**
  * Creates a markdown static middleware function
  * @param { string } baseDir - The Base directory
@@ -46,17 +38,20 @@ const defaultOptions: Required<MarkdownStaticOptions> = {
  */
 export default function markdownStatic(
   baseDir: string,
-  options: Partial<MarkdownStaticOptions>
+  options: Partial<MarkdownStaticOptions> = {}
 ): RequestHandler<Record<string, never>, string> {
-  const opts = Object.assign(defaultOptions, options);
-  return async (req, res, next) => {
+  const opts: Required<MarkdownStaticOptions> = {
+    extensionRequired: options.extensionRequired ?? true,
+    extensions: options.extensions ?? [".md", ".markdown"],
+  };
+  const middleware: RequestHandler = async (req, res, next) => {
     const fileName = `${baseDir}/${req.path}`;
     try {
       await stat(fileName);
     } catch (err) {
       return next(err);
     }
-    const ext = extname(fileName) as Extension;
+    const ext = extname(fileName);
     if (opts.extensions.includes(ext) || (!opts.extensionRequired && !ext)) {
       const text = await htmlFromMarkdownFile(fileName);
       return res.send(text);
@@ -64,4 +59,5 @@ export default function markdownStatic(
     const text = await readFile(fileName);
     return res.send(text.toString());
   };
+  return middleware;
 }
