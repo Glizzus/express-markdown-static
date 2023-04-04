@@ -1,6 +1,6 @@
 {
   "name": "express-markdown-static",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An Express middleware function for serving static content while also rendering markdown",
   "main": "index.js",
   "scripts": {
